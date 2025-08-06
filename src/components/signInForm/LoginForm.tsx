@@ -1,30 +1,42 @@
-export default function signInForm() {
+import { useState } from "react";
+import { useAppDispatch } from "../../hooks/useAppDispatch";
+import { login } from "../../redux/authSlice";
+
+export default function LoginForm() {
+  const dispatch = useAppDispatch();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    dispatch(login({ email, password }));
+  };
+
   return (
-    <form>
+    <form onSubmit={handleSubmit}>
       <div className="input-wrapper">
         <label htmlFor="username">Username</label>
-        <input type="text" id="username" />
+        <input
+          type="text"
+          id="username"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
       </div>
       <div className="input-wrapper">
         <label htmlFor="password">Password</label>
-        <input type="password" id="password" />
+        <input
+          type="password"
+          id="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
       </div>
       <div className="input-remember">
         <input type="checkbox" id="remember-me" />
         <label htmlFor="remember-me">Remember me</label>
       </div>
-      {/* PLACEHOLDER DUE TO STATIC SITE */}
-      <a href="/profile" className="sign-in-button">
-        Sign In
-      </a>
-      {/* SHOULD BE THE BUTTON BELOW  */}
-      <button
-        className="sign-in-button"
-        onClick={(e) => {
-          e.preventDefault();
-          console.log("Sign In button clicked");
-        }}
-      >
+      <button type="submit" className="sign-in-button">
         Sign In
       </button>
     </form>

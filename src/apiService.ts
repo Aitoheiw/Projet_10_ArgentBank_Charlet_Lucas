@@ -1,15 +1,9 @@
-// src/api/apiService.js
-
 const API_URL = "http://localhost:3001/api/v1";
 
-/**
- * Appelle l’API pour se connecter avec les identifiants
- * Ne gère pas le stockage, juste la requête.
- * @param {string} email
- * @param {string} password
- * @returns {Promise<string>} token
- */
-export async function loginUser(email, password) {
+export async function loginUser(
+  email: string,
+  password: string
+): Promise<string> {
   const response = await fetch(`${API_URL}/user/login`, {
     method: "POST",
     headers: {
