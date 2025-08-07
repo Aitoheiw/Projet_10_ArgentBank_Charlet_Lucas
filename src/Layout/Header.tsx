@@ -1,3 +1,8 @@
+/**
+ * The navigation bar at the top of every page.
+ *
+ * @returns A `nav` element containing the logo and a "Sign In" link.
+ */
 export default function Header() {
   return (
     <nav className="main-nav">

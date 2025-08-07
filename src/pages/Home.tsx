@@ -1,3 +1,9 @@
+/**
+ * The homepage of the Argent Bank website, containing a hero section and a
+ * features section.
+ *
+ * @returns A `main` element containing a hero section and a features section.
+ */
 export default function Home() {
   return (
     <main>

@@ -2,6 +2,11 @@ import { useState } from "react";
 import { useAppDispatch } from "../../hooks/useAppDispatch";
 import { login } from "../../redux/authSlice";
 
+/**
+ * A React component for a login form.
+ *
+ * @returns A form with email, password and remember me fields, and a sign in button.
+ */
 export default function LoginForm() {
   const dispatch = useAppDispatch();
   const [email, setEmail] = useState("");

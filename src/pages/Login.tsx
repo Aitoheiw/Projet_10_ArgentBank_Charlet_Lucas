@@ -1,4 +1,9 @@
 import LoginForm from "../components/signInForm/LoginForm";
+/**
+ * The login page, containing a sign in form.
+ *
+ * @returns A `main` element with a sign in form.
+ */
 export default function Login() {
   return (
     <main className="main bg-dark">

@@ -1,3 +1,9 @@
+/**
+ * The user profile page, containing a hero section with a welcome message and
+ * an edit button, and a features section with a list of accounts.
+ *
+ * @returns A `main` element containing a hero section and a features section.
+ */
 export default function Profile() {
   return (
     <main className="main bg-dark">
