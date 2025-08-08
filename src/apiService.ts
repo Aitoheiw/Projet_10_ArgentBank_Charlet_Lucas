@@ -1,5 +1,3 @@
-const API_URL = "http://localhost:3001/api/v1";
-
 /**
  * Sends a POST request to the login endpoint with the provided email and password.
  * Throws an error if the login attempt is unsuccessful.
@@ -10,6 +8,7 @@ const API_URL = "http://localhost:3001/api/v1";
  * @throws An error if the login request fails.
  */
 
+const API_URL = "http://localhost:3001/api/v1";
 export async function loginUser(
   email: string,
   password: string
