@@ -25,7 +25,7 @@ export default function ProfileCards({
   Description,
 }: ProfileCardsProps) {
   return (
-    <>
+    <section className="account">
       <div className="account-content-wrapper">
         <h3 className="account-title">{Title}</h3>
         <p className="account-amount">{Amount}</p>
@@ -34,6 +34,6 @@ export default function ProfileCards({
       <div className="account-content-wrapper cta">
         <button className="transaction-button">View transactions</button>
       </div>
-    </>
+    </section>
   );
 }
