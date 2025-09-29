@@ -19,8 +19,9 @@ export default function Header() {
         />
         <h1 className="sr-only">Argent Bank</h1>
       </a>
-      <div>
+      <div className="main-nav-item">
         <i className="fa fa-user-circle"></i>
+        {isAuth ? <a href="/profile">Profile</a> : null}
         {isAuth ? <LogoutButton /> : <a href="/login">Login</a>}
       </div>
     </nav>

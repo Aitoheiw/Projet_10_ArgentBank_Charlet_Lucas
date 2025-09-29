@@ -1,3 +1,5 @@
+import { useSelector } from "react-redux";
+import { selectUser, selectAuthLoading } from "../redux/authSlice";
 import AccountHeader from "../components/accountHeader/AccountHeader";
 import ProfileCards from "../components/profileCards/ProfileCards";
 
@@ -26,10 +28,14 @@ const cards = [
  * @returns A `main` element containing a hero section and a features section.
  */
 export default function Profile() {
+  const user = useSelector(selectUser);
+  const loading = useSelector(selectAuthLoading);
 
+  if (loading && !user) return <p>Chargement du profil…</p>;
+  if (!user) return <p>Profil indisponible.</p>;
   return (
     <main className="main bg-dark">
-      <AccountHeader name="Tony Jarvis" />
+      <AccountHeader name={user.userName} />
       <h2 className="sr-only">Accounts</h2>
       {cards.map((card) => (
         <ProfileCards
@@ -39,9 +45,6 @@ export default function Profile() {
           Description={card.Description}
         />
       ))}
-
-    
-      
     </main>
   );
 }

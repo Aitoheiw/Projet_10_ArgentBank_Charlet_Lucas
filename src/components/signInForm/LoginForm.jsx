@@ -1,6 +1,6 @@
 import { use, useState } from "react";
 import { useDispatch } from "react-redux";
-import { loginUser } from "../../redux/authSlice";
+import { loginUser, fetchProfile } from "../../redux/authSlice";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
@@ -28,15 +28,11 @@ export default function LoginForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormError(null);
-    console.log("[LoginForm] payload envoyé au thunk:", {
-      email,
-      password,
-      rememberMe,
-    });
 
     try {
       // unwrap = succès → payload, échec → throw
       await dispatch(loginUser({ email, password, rememberMe })).unwrap();
+      await dispatch(fetchProfile()).unwrap();
       setEmail("");
       setPassword("");
       navigate("/profile");

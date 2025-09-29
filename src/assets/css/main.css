@@ -290,6 +290,14 @@ body {
   text-align: center;
 }
 
+.main-nav-item {
+  width: 15vw;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
 @media (min-width: 720px) {
   .account {
     flex-direction: row;
