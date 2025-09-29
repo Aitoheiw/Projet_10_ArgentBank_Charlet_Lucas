@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
+/** LOGIN **/
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async (credentials, { rejectWithValue }) => {
@@ -10,7 +11,6 @@ export const loginUser = createAsyncThunk(
         body: JSON.stringify(credentials),
       });
 
-      // ERREURS HTTP on REJECT
       if (!res.ok) {
         let message = "Identifiants invalides";
         try {
@@ -21,55 +21,67 @@ export const loginUser = createAsyncThunk(
       }
 
       const data = await res.json();
-      return {
-        id: data.id,
-        email: data.email,
-        name: data.name,
-        token: data.token,
-      };
+      return { token: data.token };
     } catch {
-      // Erreur réseau (serveur down, CORS, etc.)
       return rejectWithValue("Network error: Unable to reach the server");
     }
   }
 );
 
-const initialState = { loading: false, user: null, token: null, error: null };
+const initialState = {
+  loading: false,
+  token: null,
+  isAuthenticated: false,
+  error: null,
+};
 
 const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    clearAuth(state) {
+    /** Re-hydrate */
+    rehydrateFromStorage(state) {
+      const token = localStorage.getItem("token");
+      state.token = token;
+      state.isAuthenticated = !!token;
+    },
+    /** Logout */
+    logout(state) {
       state.loading = false;
-      state.user = null;
       state.token = null;
+      state.isAuthenticated = false;
       state.error = null;
+      localStorage.removeItem("token");
     },
   },
   extraReducers: (builder) => {
     builder
       .addCase(loginUser.pending, (state) => {
         state.loading = true;
-        state.user = null;
-        state.token = null;
         state.error = null;
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload;
         state.token = action.payload.token;
+        state.isAuthenticated = true;
         state.error = null;
+        localStorage.setItem("token", action.payload.token);
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
-        state.user = null;
         state.token = null;
-        console.log(action.error.message);
+        state.isAuthenticated = false;
         state.error =
           action.payload ?? action.error?.message ?? "Unknown error";
       });
   },
 });
-export const { clearAuth } = authSlice.actions;
+
+export const { rehydrateFromStorage, logout } = authSlice.actions;
+
+export const selectIsAuth = (state) => state.auth.isAuthenticated;
+export const selectAuthToken = (state) => state.auth.token;
+export const selectAuthError = (state) => state.auth.error;
+export const selectAuthLoading = (state) => state.auth.loading;
+
 export default authSlice.reducer;

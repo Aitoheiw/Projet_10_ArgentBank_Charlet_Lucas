@@ -1,9 +1,14 @@
+import { useSelector } from "react-redux";
+import { selectIsAuth } from "../redux/authSlice";
+import LogoutButton from "../components/logoutBtn/LogoutBtn.jsx";
+
 /**
  * The navigation bar at the top of every page.
  *
  * @returns A `nav` element containing the logo and a "Sign In" link.
  */
 export default function Header() {
+  const isAuth = useSelector(selectIsAuth);
   return (
     <nav className="main-nav">
       <a className="main-nav-logo" href="/">
@@ -15,11 +20,10 @@ export default function Header() {
         <h1 className="sr-only">Argent Bank</h1>
       </a>
       <div>
-        <a className="main-nav-item" href="/login">
-          <i className="fa fa-user-circle"></i>
-          Sign In
-        </a>
+        <i className="fa fa-user-circle"></i>
+        {isAuth ? <LogoutButton /> : <a href="/login">Login</a>}
       </div>
     </nav>
   );
 }
+<i className="fa fa-user-circle"></i>;
