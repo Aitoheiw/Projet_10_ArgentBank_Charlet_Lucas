@@ -3,12 +3,12 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 /** LOGIN **/
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
-  async (credentials, { rejectWithValue }) => {
+  async ({ email, password, rememberMe }, { rejectWithValue }) => {
     try {
       const res = await fetch("http://localhost:3001/api/v1/user/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(credentials),
+        body: JSON.stringify({ email, password }),
       });
 
       if (!res.ok) {
@@ -21,7 +21,7 @@ export const loginUser = createAsyncThunk(
       }
 
       const data = await res.json();
-      return { token: data.token };
+      return { token: data.token, rememberMe };
     } catch {
       return rejectWithValue("Network error: Unable to reach the server");
     }
@@ -65,7 +65,11 @@ const authSlice = createSlice({
         state.token = action.payload.token;
         state.isAuthenticated = true;
         state.error = null;
-        localStorage.setItem("token", action.payload.token);
+        if (action.payload.rememberMe) {
+          localStorage.setItem("token", action.payload.token);
+        } else {
+          localStorage.removeItem("token");
+        }
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;

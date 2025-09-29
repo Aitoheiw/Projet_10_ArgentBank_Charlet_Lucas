@@ -18,6 +18,7 @@ export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [formError, setFormError] = useState(null);
+  const [rememberMe, setRememberMe] = useState(false);
 
   //redux states
   const { loading, error } = useSelector((state) => state.auth);
@@ -27,10 +28,15 @@ export default function LoginForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormError(null);
+    console.log("[LoginForm] payload envoyé au thunk:", {
+      email,
+      password,
+      rememberMe,
+    });
 
     try {
       // unwrap = succès → payload, échec → throw
-      await dispatch(loginUser({ email, password })).unwrap();
+      await dispatch(loginUser({ email, password, rememberMe })).unwrap();
       setEmail("");
       setPassword("");
       navigate("/profile");
@@ -52,6 +58,7 @@ export default function LoginForm() {
           id="username"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          required
         />
       </div>
       <div className="input-wrapper">
@@ -61,10 +68,16 @@ export default function LoginForm() {
           id="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          required
         />
       </div>
       <div className="input-remember">
-        <input type="checkbox" id="remember-me" />
+        <input
+          type="checkbox"
+          id="remember-me"
+          checked={rememberMe}
+          onChange={(e) => setRememberMe(e.target.checked)}
+        />
         <label htmlFor="remember-me">Remember me</label>
       </div>
 
