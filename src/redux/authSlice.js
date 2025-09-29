@@ -1,5 +1,6 @@
 // authSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { putUserName } from "../services/apiService";
 
 const BASE_URL = "http://localhost:3001/api/v1";
 
@@ -8,7 +9,7 @@ export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async ({ email, password, rememberMe }, { rejectWithValue }) => {
     try {
-      const res = await fetch("http://localhost:3001/api/v1/user/login", {
+      const res = await fetch(`${BASE_URL}/user/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -29,7 +30,6 @@ export const loginUser = createAsyncThunk(
       if (!token)
         return rejectWithValue("Token manquant dans la réponse du serveur");
 
-      console.log("[authSlice] loginUser token:", token);
       return { token, rememberMe };
     } catch {
       return rejectWithValue("Network error: Unable to reach the server");
@@ -45,7 +45,7 @@ export const fetchProfile = createAsyncThunk(
       const token = getState().auth.token || localStorage.getItem("token");
       if (!token) return rejectWithValue("No token");
 
-      const res = await fetch("http://localhost:3001/api/v1/user/profile", {
+      const res = await fetch(`${BASE_URL}/user/profile`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -54,6 +54,9 @@ export const fetchProfile = createAsyncThunk(
       });
 
       if (!res.ok) {
+        if (res.status === 401) {
+          return rejectWithValue("Unauthorized (401) – please login again");
+        }
         let message = `HTTP ${res.status}`;
         try {
           const err = await res.json();
@@ -64,10 +67,24 @@ export const fetchProfile = createAsyncThunk(
 
       const data = await res.json();
       const user = data?.body ?? data;
-      console.log("[authSlice] fetchProfile user:", user);
       return user;
     } catch {
       return rejectWithValue("Network error: Unable to reach the server");
+    }
+  }
+);
+
+export const updateUserName = createAsyncThunk(
+  "auth/updateUserName",
+  async ({ userName }, { getState, rejectWithValue }) => {
+    try {
+      const state = getState();
+      const token = state.auth.token || localStorage.getItem("token");
+      if (!token) return rejectWithValue("No token");
+      const body = await putUserName(token, userName);
+      return body; // { firstName, lastName, userName }
+    } catch (e) {
+      return rejectWithValue(e?.message || "Failed to update username");
     }
   }
 );
@@ -78,6 +95,9 @@ const initialState = {
   isAuthenticated: false,
   user: null,
   error: null,
+
+  updatingUsername: false,
+  updateUsernameError: null,
 };
 
 const authSlice = createSlice({
@@ -139,6 +159,32 @@ const authSlice = createSlice({
         state.user = null;
         state.error =
           action.payload ?? action.error?.message ?? "Unknown error";
+      })
+
+      // UPDATE USERNAME
+      .addCase(updateUserName.pending, (state) => {
+        state.updatingUsername = true;
+        state.updateUsernameError = null;
+      })
+      .addCase(updateUserName.fulfilled, (state, action) => {
+        state.updatingUsername = false;
+        // merge propre: on ne touche qu’au user
+        if (state.user) {
+          state.user.firstName = action.payload.firstName;
+          state.user.lastName = action.payload.lastName;
+          state.user.userName = action.payload.userName;
+        } else {
+          state.user = action.payload;
+        }
+      })
+      .addCase(updateUserName.rejected, (state, action) => {
+        state.updatingUsername = false;
+        state.updateUsernameError =
+          action.error?.message || "Failed to update username";
+        state.updateUsernameError =
+          action.payload ??
+          action.error?.message ??
+          "Failed to update username";
       });
   },
 });
@@ -149,5 +195,8 @@ export const selectAuthToken = (state) => state.auth.token;
 export const selectAuthError = (state) => state.auth.error;
 export const selectAuthLoading = (state) => state.auth.loading;
 export const selectUser = (state) => state.auth.user;
+export const selectUpdatingUsername = (state) => state.auth.updatingUsername;
+export const selectUpdateUsernameError = (state) =>
+  state.auth.updateUsernameError;
 
 export default authSlice.reducer;

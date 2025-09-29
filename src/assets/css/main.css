@@ -298,6 +298,56 @@ body {
   gap: 1rem;
 }
 
+.edit-form {
+  max-width: 360px;
+  margin: 30px auto;
+  text-align: left;
+  background: #fff;
+  color: #222;
+  padding: 1rem;
+  border-radius: 15px;
+}
+.edit-form h2 {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+.edit-form label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.8rem;
+  margin: 0.5rem 0;
+  font-size: 0.9rem;
+}
+.edit-form input {
+  width: 50%;
+  padding: 0.5rem;
+  margin-top: 0.25rem;
+}
+.edit-form input:disabled {
+  background: #eee;
+  color: #777;
+}
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.btn {
+  background: #00bc77;
+  color: white;
+  padding: 0.8rem 3.5rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.error {
+  color: #c0392b;
+  margin-top: 0.5rem;
+}
+
 @media (min-width: 720px) {
   .account {
     flex-direction: row;

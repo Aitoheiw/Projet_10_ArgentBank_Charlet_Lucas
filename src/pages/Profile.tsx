@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import { selectUser, selectAuthLoading } from "../redux/authSlice";
-import AccountHeader from "../components/accountHeader/AccountHeader";
+import AccountHeader from "../components/accountHeader/AccountHeader.jsx";
 import ProfileCards from "../components/profileCards/ProfileCards";
 
 const cards = [
