@@ -17,7 +17,7 @@ export default function AccountHeader({ name }) {
   const [userName, setUserName] = useState(user?.userName ?? name);
   const [localError, setLocalError] = useState("");
 
-  // Resync quand Redux change (ex: après login ou update)
+  // Resync quand Redux change
   useEffect(() => {
     if (user?.userName) {
       setUserName(user.userName);

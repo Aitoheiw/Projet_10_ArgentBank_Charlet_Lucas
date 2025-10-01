@@ -30,7 +30,6 @@ export default function LoginForm() {
     setFormError(null);
 
     try {
-      // unwrap = succès → payload, échec → throw
       await dispatch(loginUser({ email, password, rememberMe })).unwrap();
       await dispatch(fetchProfile()).unwrap();
       setEmail("");

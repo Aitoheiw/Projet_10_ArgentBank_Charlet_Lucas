@@ -1,13 +1,43 @@
-// src/services/apiService.js
 const API_BASE =
   import.meta.env.VITE_API_BASE_URL ?? "http://localhost:3001/api/v1";
 
-/**
- * Met à jour UNIQUEMENT le userName via PUT /user/profile
- * @param {string} token - JWT Bearer
- * @param {string} userName - nouveau pseudo
- * @returns {Promise<{firstName:string,lastName:string,userName:string}>}
- */
+/** LOGIN */
+export async function login(email, password) {
+  const res = await fetch(`${API_BASE}/user/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err?.message || "Login failed");
+  }
+
+  const data = await res.json();
+  return data.body;
+}
+
+/** PROFILE (GET) */
+export async function getProfile(token) {
+  const res = await fetch(`${API_BASE}/user/profile`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err?.message || `HTTP ${res.status}`);
+  }
+
+  const data = await res.json();
+  return data.body;
+}
+
+/** PROFILE (PUT username) */
 export async function putUserName(token, userName) {
   const res = await fetch(`${API_BASE}/user/profile`, {
     method: "PUT",

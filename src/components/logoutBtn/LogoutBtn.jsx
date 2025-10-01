@@ -1,4 +1,3 @@
-// components/LogoutButton.jsx
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../../redux/authSlice";
