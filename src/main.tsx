@@ -7,7 +7,11 @@ import App from "./App.tsx";
 import { rehydrateFromStorage, fetchProfile } from "./redux/authSlice";
 
 store.dispatch(rehydrateFromStorage());
-if (localStorage.getItem("token")) {
+
+const storedToken =
+  localStorage.getItem("token") ?? sessionStorage.getItem("token");
+
+if (storedToken) {
   store.dispatch(fetchProfile());
 }
 

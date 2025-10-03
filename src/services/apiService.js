@@ -34,7 +34,15 @@ export async function getProfile(token) {
   }
 
   const data = await res.json();
-  return data.body;
+  return {
+    email: data.body.email,
+    firstName: data.body.firstName,
+    lastName: data.body.lastName,
+    userName: data.body.userName,
+    createdAt: data.body.createdAt,
+    updatedAt: data.body.updatedAt,
+    id: data.body.id,
+  };
 }
 
 /** PROFILE (PUT username) */

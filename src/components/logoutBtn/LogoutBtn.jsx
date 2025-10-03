@@ -20,5 +20,9 @@ export default function LogoutButton() {
     navigate("/login");
   };
 
-  return <a onClick={onLogout}>Logout</a>;
+  return (
+    <a onClick={onLogout}>
+      <i className="fa fa-sign-out"></i> Sign Out
+    </a>
+  );
 }

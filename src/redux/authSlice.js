@@ -1,6 +1,9 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { putUserName, login, getProfile } from "../services/apiService";
 
+const readStoredToken = () =>
+  localStorage.getItem("token") ?? sessionStorage.getItem("token");
+
 // LOGIN
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
@@ -9,7 +12,14 @@ export const loginUser = createAsyncThunk(
       const data = await login(email, password);
       const token = data.token;
       if (!token) return rejectWithValue("Token manquant");
-      return { token, rememberMe };
+      if (rememberMe) {
+        localStorage.setItem("token", token);
+        sessionStorage.removeItem("token");
+      } else {
+        sessionStorage.setItem("token", token);
+        localStorage.removeItem("token");
+      }
+      return { token };
     } catch (e) {
       return rejectWithValue(e.message);
     }
@@ -21,7 +31,7 @@ export const fetchProfile = createAsyncThunk(
   "auth/fetchProfile",
   async (_, { getState, rejectWithValue }) => {
     try {
-      const token = getState().auth.token || localStorage.getItem("token");
+      const token = getState().auth.token ?? readStoredToken();
       if (!token) return rejectWithValue("No token");
       return await getProfile(token);
     } catch (e) {
@@ -35,7 +45,7 @@ export const updateUserName = createAsyncThunk(
   "auth/updateUserName",
   async ({ userName }, { getState, rejectWithValue }) => {
     try {
-      const token = getState().auth.token || localStorage.getItem("token");
+      const token = getState().auth.token ?? readStoredToken();
       if (!token) return rejectWithValue("No token");
       return await putUserName(token, userName);
     } catch (e) {
@@ -60,7 +70,7 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     rehydrateFromStorage(state) {
-      const token = localStorage.getItem("token");
+      const token = readStoredToken();
       state.token = token;
       state.isAuthenticated = !!token;
     },
@@ -71,6 +81,7 @@ const authSlice = createSlice({
       state.user = null;
       state.error = null;
       localStorage.removeItem("token");
+      sessionStorage.removeItem("token");
     },
   },
   extraReducers: (builder) => {
@@ -85,11 +96,6 @@ const authSlice = createSlice({
         state.token = action.payload.token;
         state.isAuthenticated = true;
         state.error = null;
-        if (action.payload.rememberMe) {
-          localStorage.setItem("token", action.payload.token);
-        } else {
-          localStorage.removeItem("token");
-        }
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
