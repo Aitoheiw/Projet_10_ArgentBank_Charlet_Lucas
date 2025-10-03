@@ -281,6 +281,7 @@ body {
   margin-right: 0.5rem;
   width: 15vw;
   display: flex;
+  cursor: pointer;
   text-decoration: none;
   align-items: center;
   justify-content: flex-end;
